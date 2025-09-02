@@ -1,0 +1,49 @@
+provider: lightrag
+label:
+  en_US: "LightRAG"
+description:
+  en_US: "Models provided by lightrag."
+  zh_Hans: "LightRAG 提供的模型。"
+icon_small:
+  en_US: "icon.svg"
+icon_large:
+  en_US: "icon.svg"
+background: "#E5E7EB"
+help:
+  title:
+    en_US: "Get your API Key from lightrag"
+    zh_Hans: "从 Lightrag 获取 API Key"
+  url:
+    en_US: "https://__put_your_url_here__/account/api-keys"
+supported_model_types:
+  - llm
+configurate_methods:
+  - customizable-model
+model_credential_schema:
+  model:
+    label:
+      en_US: Model Name of LightRAG instance
+      zh_Hans: LightRAG实例名称
+    placeholder:
+      en_US: Enter your LightRAG instance name
+      zh_Hans: 输入LightRAG实例名称
+  credential_form_schemas:
+    - variable: server_url
+      type: text-input
+      label:
+        en_US: the url of LightRAG instance
+        zh_Hans: LightRAG服务器URL
+      required: true
+    - variable: token_secret
+      label:
+        en_US: lightrag token secret
+      type: secret-input
+      required: false
+      placeholder:
+        zh_Hans: 在此输入您的 lightrag token secret
+        en_US: Enter your lightrag token secret
+extra:
+  python:
+    provider_source: provider/lightrag.py
+    model_sources:
+      - "models/llm/llm.py"
