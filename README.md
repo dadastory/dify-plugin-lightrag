@@ -26,12 +26,14 @@
 1. Clone or download this plugin into your Dify plugins directory.  
 2. Configure the plugin according to your LightRAG server address and credentials.  
 3. Restart Dify to load the plugin.  
+4. Install and startup lightrag refer official document [https://github.com/HKUDS/LightRAG]
 
 ### Usage
-
+![img.png](img.png)
 - Once installed, you can select `lightrag` as a model in Dify LLM settings.  
 - Send prompts normally; the plugin will forward requests to the LightRAG server.  
-
+- You can change the mode configure for request lightrag
+![img_1.png](img_1.png)
 ### Configuration
 
 - `server_url`: The HTTP endpoint of the running LightRAG server (e.g., `http://localhost:9621`).  
