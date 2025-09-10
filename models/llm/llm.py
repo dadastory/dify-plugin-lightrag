@@ -244,7 +244,7 @@ class LightragLargeLanguageModel(LargeLanguageModel):
             ),
             ParameterRule(
                 name="response_type", type=ParameterType.STRING,
-                default=LightRAGResponseType.MULTI,
+                default=LightRAGResponseType.MULTI.value,
                 required=True,
                 options=[rep_type.value for rep_type in LightRAGResponseType],
                 label=I18nObject(
