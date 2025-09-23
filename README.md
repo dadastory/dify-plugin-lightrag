@@ -1,7 +1,7 @@
 ## lightrag
 
 **Author:** dadastory  
-**Version:** 0.0.1  
+**Version:** 0.0.3  
 **Type:** model  
 
 ### Description
@@ -38,3 +38,14 @@
 
 - `server_url`: The HTTP endpoint of the running LightRAG server (e.g., `http://localhost:9621`).  
 - `api_key` or other credentials as required by LightRAG.  （However, lightrag cannot support this params, so it won't work currently)
+
+# 📝 Version History
+
+- **v0.0.3**
+  Add request timeout config to aviod some error
+
+- **v0.0.2**  
+  Fixed incorrect default parameters.
+
+- **v0.0.1** 
+  Initial stable release with core features.

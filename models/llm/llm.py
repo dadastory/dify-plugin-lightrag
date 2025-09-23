@@ -102,7 +102,9 @@ class LightragLargeLanguageModel(LargeLanguageModel):
             "history_turns": len(history_message_conversation),
             "conversation_history": history_message_conversation,
             **model_parameters}
-        with httpx.stream("POST", query_path, json=query_params) as response:
+        print(model_parameters)
+        with httpx.stream("POST", query_path, json=query_params,
+                          timeout=model_parameters['request_timeout']) as response:
             response.raise_for_status()
             idx = 0
             for line in response.iter_lines():
@@ -142,7 +144,7 @@ class LightragLargeLanguageModel(LargeLanguageModel):
             "history_turns": len(history_message_conversation),
             "conversation_history": history_message_conversation,
             **model_parameters}
-        with httpx.post(query_path, json=query_params) as response:
+        with httpx.post(query_path, json=query_params, timeout=model_parameters['request_timeout']) as response:
             response.raise_for_status()
             result = response.json()['response']
             return LLMResult(
@@ -328,6 +330,19 @@ class LightragLargeLanguageModel(LargeLanguageModel):
                 help=I18nObject(
                     en_US="Enable reranking for retrieved text chunks",
                     zh_Hans="是否启动对召回的context做rerank",
+                )
+            ),
+            ParameterRule(
+                name="request_timeout", type=ParameterType.INT,
+                default=10,
+                required=True,
+                label=I18nObject(
+                    en_US="Maximum request timeout in seconds",
+                    zh_Hans="最大请求超时时间"
+                ),
+                help=I18nObject(
+                    en_US="Maximum request timeout in seconds",
+                    zh_Hans="最大请求超时时间，单位是秒"
                 )
             ),
 
