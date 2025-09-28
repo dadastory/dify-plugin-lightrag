@@ -1,4 +1,4 @@
-**# lightrag
+# lightrag
 
 **Author:** dadastory  
 **Type:** model
@@ -81,4 +81,4 @@ LightRAG supports three output modes when connecting to **Dify**:
   - Fixed incorrect default parameters.
 
 - **v0.0.1**
-  - Initial stable release with core features.**
+  - Initial stable release with core features.
