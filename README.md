@@ -74,8 +74,11 @@ LightRAG supports three output modes when connecting to **Dify**:
 
 # 📝 Version History
 
+- **v0.0.4**
+  - Remove print config to avoid some error
+
 - **v0.0.3**
-  - Add request timeout config to aviod some error
+  - Add request timeout config to avoid some error
 
 - **v0.0.2**  
   - Fixed incorrect default parameters.

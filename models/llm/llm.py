@@ -85,7 +85,7 @@ class LightragLargeLanguageModel(LargeLanguageModel):
         :param user: unique user id
         :return: full response or stream response chunk generator result
         """
-        print(f"stream: {stream}")
+        logger.info(f"stream: {stream}")
         if stream:
             return self._handle_stream_response(model, credentials["server_url"], model_parameters, prompt_messages)
         return self._handle_sync_response(model, credentials["server_url"], model_parameters, prompt_messages)
@@ -102,7 +102,7 @@ class LightragLargeLanguageModel(LargeLanguageModel):
             "history_turns": len(history_message_conversation),
             "conversation_history": history_message_conversation,
             **model_parameters}
-        print(model_parameters)
+        logger.info(f"model_parameters {model_parameters}")
         with httpx.stream("POST", query_path, json=query_params,
                           timeout=model_parameters['request_timeout']) as response:
             response.raise_for_status()
