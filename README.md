@@ -2,6 +2,9 @@
 
 **Author:** dadastory  
 **Type:** model
+> ⚠️ **Note:** LightRAG only supports version **v1.4.9.4**.  
+> Other versions are not guaranteed to work.    
+> If you encounter any issues, please notify me.
 
 ## Description
 
@@ -74,14 +77,17 @@ LightRAG supports three output modes when connecting to **Dify**:
 
 # 📝 Version History
 
-- **v0.0.4**
-  - Remove print config to avoid some error
+- **v0.0.5**  
+  - Updated to support the v1.4.9.4 version.
 
-- **v0.0.3**
-  - Add request timeout config to avoid some error
+- **v0.0.4**  
+  - Removed `print` config to avoid certain errors.
+
+- **v0.0.3**  
+  - Added request timeout config to prevent some errors.
 
 - **v0.0.2**  
   - Fixed incorrect default parameters.
 
-- **v0.0.1**
+- **v0.0.1**  
   - Initial stable release with core features.

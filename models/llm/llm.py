@@ -108,7 +108,17 @@ class LightragLargeLanguageModel(LargeLanguageModel):
             response.raise_for_status()
             idx = 0
             for line in response.iter_lines():
-                result = json.loads(line)['response']
+                if not line:
+                    continue
+                try:
+                    data = json.loads(line)
+                except json.JSONDecodeError:
+                    logger.info(f"Skipping invalid JSON line: {line}")
+                    continue
+                result = data.get('response')
+                if result is None:
+                    logger.info(f"No 'response' field in line: {line}")
+                    continue
                 yield LLMResultChunk(
                     model=model,
                     prompt_messages=prompt_messages,
@@ -138,12 +148,25 @@ class LightragLargeLanguageModel(LargeLanguageModel):
         system_prompt, user_prompt, history_message_conversation = self._resolve_query_messages(prompt_messages)
         if not user_prompt:
             raise InvokeBadRequestError('user query cannot be empty!')
+
+        processed_parameters = model_parameters.copy()
+        list_params = ["hl_keywords", "ll_keywords"]
+
+        for param in list_params:
+            value = processed_parameters.get(param, "")
+            # 如果是非空字符串，用逗号分割并去掉首尾空格
+            if isinstance(value, str) and value.strip():
+                processed_parameters[param] = [v.strip() for v in value.split(",")]
+            else:
+                processed_parameters[param] = []
+
         query_params = {
             "user_prompt": system_prompt,
             "query": user_prompt,
             "history_turns": len(history_message_conversation),
             "conversation_history": history_message_conversation,
-            **model_parameters}
+            **processed_parameters
+        }
         with httpx.post(query_path, json=query_params, timeout=model_parameters['request_timeout']) as response:
             response.raise_for_status()
             result = response.json()['response']
@@ -271,7 +294,7 @@ class LightragLargeLanguageModel(LargeLanguageModel):
             ),
             ParameterRule(
                 name="chunk_top_k", type=ParameterType.INT,
-                default=20,
+                default=10,
                 required=True,
                 label=I18nObject(
                     en_US="chunk_top_k", zh_Hans="chunk_top_k"
@@ -283,7 +306,7 @@ class LightragLargeLanguageModel(LargeLanguageModel):
             ),
             ParameterRule(
                 name="max_entity_tokens", type=ParameterType.INT,
-                default=6000,
+                default=10000,
                 required=True,
                 label=I18nObject(
                     en_US="Maximum number of tokens allocated for entity context", zh_Hans="最大实体token数量"
@@ -295,7 +318,7 @@ class LightragLargeLanguageModel(LargeLanguageModel):
             ),
             ParameterRule(
                 name="max_relation_tokens", type=ParameterType.INT,
-                default=8000,
+                default=10000,
                 required=True,
                 label=I18nObject(
                     en_US="Maximum number of tokens allocated for relationship context",
@@ -304,6 +327,72 @@ class LightragLargeLanguageModel(LargeLanguageModel):
                 help=I18nObject(
                     en_US="Maximum number of tokens allocated for entity context in unified token control system.",
                     zh_Hans="系统控制为关系描述控制最大实体token数量"
+                )
+            ),
+            ParameterRule(
+                name="max_token_for_text_unit", type=ParameterType.INT,
+                default=4000,
+                required=True,
+                label=I18nObject(
+                    en_US="Maximum tokens per text unit",
+                    zh_Hans="单个文本单元的最大token数"
+                ),
+                help=I18nObject(
+                    en_US="Controls the maximum number of tokens allowed in each text unit during document segmentation.",
+                    zh_Hans="控制文档分段时每个文本单元的最大token数量。"
+                )
+            ),
+
+            ParameterRule(
+                name="max_token_for_local_context", type=ParameterType.INT,
+                default=4000,
+                required=True,
+                label=I18nObject(
+                    en_US="Maximum tokens for local context",
+                    zh_Hans="局部上下文最大token数"
+                ),
+                help=I18nObject(
+                    en_US="Defines the maximum total tokens from locally retrieved text units included in the prompt.",
+                    zh_Hans="定义从局部检索到的文本单元拼接到提示中的最大token总数。"
+                )
+            ),
+            ParameterRule(
+                name="hl_keywords", type=ParameterType.STRING,
+                default="",
+                required=False,
+                label=I18nObject(
+                    en_US="High-Level Keywords",
+                    zh_Hans="高优先级关键词"
+                ),
+                help=I18nObject(
+                    en_US="Comma-separated keywords that should be prioritized during retrieval and context construction. Example: 'kernel,cuda,tensor'",
+                    zh_Hans="用逗号分隔的高优先级关键词列表，在检索和上下文构建时优先考虑。例如：'kernel,cuda,tensor'"
+                )
+            ),
+            ParameterRule(
+                name="ll_keywords", type=ParameterType.STRING,
+                default="",
+                required=False,
+                label=I18nObject(
+                    en_US="Low-Level Keywords",
+                    zh_Hans="低优先级关键词"
+                ),
+                help=I18nObject(
+                    en_US="Comma-separated keywords that should have reduced priority or influence during retrieval and context construction. Example: 'print,log,debug'",
+                    zh_Hans="用逗号分隔的低优先级关键词列表，在检索和上下文构建时权重较低或影响较小。例如：'print,log,debug'"
+                )
+            ),
+            ParameterRule(
+                name="max_token_for_global_context", type=ParameterType.INT,
+                default=4000,
+                required=True,
+                label=I18nObject(
+                    en_US="Maximum tokens for global context",
+                    zh_Hans="全局上下文最大token数"
+                ),
+                help=I18nObject(
+                    en_US="Controls the maximum number of tokens from globally aggregated or summarized knowledge included in the prompt.",
+                    zh_Hans="控制拼接到提示中的全局汇总或知识摘要的最大token数量。"
                 )
             ),
             ParameterRule(
