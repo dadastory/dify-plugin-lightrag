@@ -87,11 +87,13 @@ class LightragLargeLanguageModel(LargeLanguageModel):
         """
         logger.info(f"stream: {stream}")
         if stream:
-            return self._handle_stream_response(model, credentials["server_url"], model_parameters, prompt_messages)
-        return self._handle_sync_response(model, credentials["server_url"], model_parameters, prompt_messages)
+            return self._handle_stream_response(model, credentials, model_parameters, prompt_messages)
+        return self._handle_sync_response(model, credentials, model_parameters, prompt_messages)
 
-    def _handle_stream_response(self, model: str, server_url: str, model_parameters: dict,
+    def _handle_stream_response(self, model: str, credentials: dict, model_parameters: dict,
                                 prompt_messages: list[PromptMessage]) -> Generator:
+        server_url = credentials['server_url']
+        secret = credentials['token_secret']
         query_path = urljoin(server_url, "/query/stream")
         system_prompt, user_prompt, history_message_conversation = self._resolve_query_messages(prompt_messages)
         if not user_prompt:
@@ -103,7 +105,7 @@ class LightragLargeLanguageModel(LargeLanguageModel):
             "conversation_history": history_message_conversation,
             **model_parameters}
         logger.info(f"model_parameters {model_parameters}")
-        with httpx.stream("POST", query_path, json=query_params,
+        with httpx.stream("POST", query_path, json=query_params, headers={'X-API-Key': secret},
                           timeout=model_parameters['request_timeout']) as response:
             response.raise_for_status()
             idx = 0
@@ -142,8 +144,10 @@ class LightragLargeLanguageModel(LargeLanguageModel):
                 )
             )
 
-    def _handle_sync_response(self, model: str, server_url: str, model_parameters: dict,
+    def _handle_sync_response(self, model: str, credentials: dict, model_parameters: dict,
                               prompt_messages: list[PromptMessage]) -> LLMResult:
+        server_url = credentials['server_url']
+        secret = credentials['token_secret']
         query_path = urljoin(server_url, "/query")
         system_prompt, user_prompt, history_message_conversation = self._resolve_query_messages(prompt_messages)
         if not user_prompt:
@@ -167,7 +171,8 @@ class LightragLargeLanguageModel(LargeLanguageModel):
             "conversation_history": history_message_conversation,
             **processed_parameters
         }
-        with httpx.post(query_path, json=query_params, timeout=model_parameters['request_timeout']) as response:
+        with httpx.post(query_path, json=query_params, headers={'X-API-Key': secret},
+                        timeout=model_parameters['request_timeout']) as response:
             response.raise_for_status()
             result = response.json()['response']
             return LLMResult(
@@ -208,7 +213,7 @@ class LightragLargeLanguageModel(LargeLanguageModel):
         try:
             params = CredentialParams(**credentials)
             version_url = urljoin(params.server_url, "/api/version")
-            response = get(url=version_url)
+            response = get(url=version_url, headers={'X-API-Key': params.token_secret})
             response.raise_for_status()
             response = response.json()
             logger.info(f"load lightrag success, lightrag version: {response['version']}")
