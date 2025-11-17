@@ -33,7 +33,8 @@
 ## Configuration
 
 - `server_url`: The HTTP endpoint of the running LightRAG server (e.g., `http://localhost:9621`).
-- `api_key` or other credentials as required by LightRAG.
+- `api_key` or other credentials as required by LightRAG. （However, lightrag cannot support this params, so it won't
+  work currently)
 - You can configure different LightRAG instances, each running in isolation.
 
 ## Usage
@@ -57,38 +58,36 @@ LightRAG supports three output modes when connecting to **Dify**:
 
 1. **Context Output Mode**  
    LightRAG returns results as **context**, which you can directly use as a replacement for Dify's knowledge base.  
-   This mode is suitable when you want LightRAG to provide background knowledge for downstream tasks.
+   This mode is suitable when you want LightRAG to provide background knowledge for downstream tasks.  
 
 2. **Prompt Output Mode**  
    LightRAG generates an automatic **system prompt** and outputs it.  
    You can then connect this prompt to any other LLM node inside Dify for further processing.  
-   This mode is flexible if you want to customize how Dify chains handle LightRAG’s results.
+   This mode is flexible if you want to customize how Dify chains handle LightRAG’s results.  
 
 3. **LLM Parsing Output Mode**  
    LightRAG leverages its **built-in LLM** to parse the results and directly provide **streaming output**.  
-   This mode is ideal when you prefer immediate results without additional LLM processing in Dify.
+   This mode is ideal when you prefer immediate results without additional LLM processing in Dify.  
 
 ---
 
-✨ With these three modes, you can choose the best way to integrate LightRAG into your Dify workflow depending on your
-use case.
+✨ With these three modes, you can choose the best way to integrate LightRAG into your Dify workflow depending on your use case.
+
+
 
 # 📝 Version History
 
-- **v0.0.6**
-    - Added **API key authentication** support.
+- **v0.0.5**  
+  - Updated to support the v1.4.9.4 version.
 
-- **v0.0.5**
-    - Updated to support the v1.4.9.4 version.
+- **v0.0.4**  
+  - Removed `print` config to avoid certain errors.
 
-- **v0.0.4**
-    - Removed `print` config to avoid certain errors.
+- **v0.0.3**  
+  - Added request timeout config to prevent some errors.
 
-- **v0.0.3**
-    - Added request timeout config to prevent some errors.
+- **v0.0.2**  
+  - Fixed incorrect default parameters.
 
-- **v0.0.2**
-    - Fixed incorrect default parameters.
-
-- **v0.0.1**
-    - Initial stable release with core features.
+- **v0.0.1**  
+  - Initial stable release with core features.

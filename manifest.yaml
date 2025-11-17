@@ -1,4 +1,4 @@
-version: 0.0.6
+version: 0.0.5
 type: plugin
 author: dadastory
 name: lightrag
@@ -19,7 +19,7 @@ plugins:
   models:
     - provider/lightrag.yaml
 meta:
-  version: 0.0.6
+  version: 0.0.5
   arch:
     - amd64
     - arm64
